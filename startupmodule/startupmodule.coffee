@@ -20,8 +20,10 @@ mainProcess = null
 cfg = null 
 cliArguments = null
 #endregion
+
 #endregion
 
+##############################################################################
 export initialize = () ->
     log "startupmodule.initialize"
     mainProcess = allModules.mainprocessmodule
@@ -30,7 +32,6 @@ export initialize = () ->
     return
 
 ##############################################################################
-#region exposedFunctions
 export cliStartup = ->
     log "cliStartup"
     try
@@ -42,4 +43,3 @@ export cliStartup = ->
         printError(err)
         if err.stack then printError(err.stack)
         process.exit(-1)
-#endregion exposed functions
