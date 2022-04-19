@@ -1,19 +1,17 @@
-cliargumentsmodule = {name: "cliargumentsmodule"}
-
-#region node_modules
-meow = require("meow")
-#endregion
-
+##############################################################
 #region logPrintFunctions
 log = (arg) ->
     if allModules.debugmodule.modulesToDebug["cliargumentsmodule"]?  then console.log "[cliargumentsmodule]: " + arg
     return
+ostr = (obj) -> JSON.stringify(obj, null, 4)
+olog = (obj) -> log "\n" + ostr(obj)
+print = (arg) -> console.log(arg)
 #endregion
-##############################################################
-cliargumentsmodule.initialize = () ->
-    log "cliargumentsmodule.initialize"
-    return
 
+##############################################################
+import meow from 'meow'
+
+##############################################################
 #region internal functions
 getHelpText = ->
     log "getHelpText"
@@ -32,6 +30,7 @@ getHelpText = ->
 getOptions = ->
     log "getOptions"
     return {
+        importMeta: import.meta,
         flags:
             option: #optionsname
                 type: "boolean" # or string
@@ -41,21 +40,22 @@ getOptions = ->
 extractMeowed = (meowed) ->
     log "extractMeowed"
 
-    option = false
+    option = false # default
+    if meowed.input[0] then option = meowed.input[0]
     if meowed.flags.option then option = true
 
     return {option}
 
+throwErrorOnUsageFail = (extract) ->
+    log "throwErrorOnUsageFail"
+    if !extract.option then throw new Error("Usag error: no option has been defined!")
+    return
 #endregion
 
-#region exposed functions
-cliargumentsmodule.extractArguments = ->
-    log "cliargumentsmodule.extractArguments"
-    options = getOptions()
+##############################################################
+export extractArguments = ->
+    log "extractArguments"
     meowed = meow(getHelpText(), getOptions())
     extract = extractMeowed(meowed)
+    throwErrorOnUsageFail(extract)
     return extract
-
-#endregion exposed functions
-
-module.exports = cliargumentsmodule
