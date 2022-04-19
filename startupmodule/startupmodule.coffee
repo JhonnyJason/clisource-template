@@ -1,22 +1,5 @@
-
-startupmodule = {name: "startupmodule"}
-
-#region modulesFromEnvironment
-#region node_modules
-chalk       = require('chalk')
-clear       = require('clear')
-figlet      = require('figlet')
-#endregion
-
-#region localModules
-mainProcess = null
-cfg = null 
-cliArguments = null
-#endregion
-#endregion
-
-#region logPrintFunctions
 ##############################################################################
+#region logPrintFunctions
 log = (arg) ->
     if allModules.debugmodule.modulesToDebug["startupmodule"]?  then console.log "[startupmodule]: " + arg
     return
@@ -26,31 +9,33 @@ printSuccess = (arg) -> console.log(chalk.green(arg))
 printError = (arg) -> console.log(chalk.red(arg))
 print = (arg) -> console.log(arg)
 #endregion
+
 ##############################################################################
-startupmodule.initialize = () ->
+#region modulesFrom Environment
+import chalk from 'chalk'
+
+##############################################################################
+#region localModules
+mainProcess = null
+cfg = null 
+cliArguments = null
+#endregion
+#endregion
+
+export initialize = () ->
     log "startupmodule.initialize"
     mainProcess = allModules.mainprocessmodule
     cfg = allModules.configmodule
     cliArguments = allModules.cliargumentsmodule
     return
 
-#region internalFunctions
-printBanner = ->
-    clear()
-    print(
-        chalk.green(
-            figlet.textSync(cfg.cli.name, { horizontalLayout: 'full' })
-        )
-    )
-#endregion
-
+##############################################################################
 #region exposedFunctions
-startupmodule.cliStartup = ->
-    log "startupmodule.cliStartup"
-    printBanner()
+export cliStartup = ->
+    log "cliStartup"
     try
         e = cliArguments.extractArguments()
-        await mainProcess.execute()
+        await mainProcess.execute(e)
         printSuccess('All done!');
     catch err
         printError("Error!")
@@ -58,6 +43,3 @@ startupmodule.cliStartup = ->
         if err.stack then printError(err.stack)
         process.exit(-1)
 #endregion exposed functions
-
-module.exports = startupmodule
-
