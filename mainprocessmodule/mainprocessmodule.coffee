@@ -1,24 +1,12 @@
 ##############################################################################
-#region logPrintFunctions
-log = (arg) ->
-    if allModules.debugmodule.modulesToDebug["mainprocessmodule"]?  then console.log "[mainprocessmodule]: " + arg
-    return
-olog = (o) -> log "\n" + ostr(o)
-ostr = (o) -> JSON.stringify(o, null, 4)
-print = (arg) -> console.log(arg)
+#region debug
+import {createLogFunctions} from "thingy-debug"
+{log, olog} = createLogFunctions("mainprocessmodule")
+
 #endregion
 
 ##############################################################################
-#region modulesFromEnvironment
-cfg = null
-#endregion
-
-##############################################################################
-export initialize = () ->
-    log "initialize"
-    cfg = allModules.configmodule
-    return 
-
+import * as cfg from "configmodule.js"
 
 ##############################################################################
 export execute = () ->
