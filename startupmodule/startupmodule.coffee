@@ -1,42 +1,33 @@
 ##############################################################################
-#region logPrintFunctions
-log = (arg) ->
-    if allModules.debugmodule.modulesToDebug["startupmodule"]?  then console.log "[startupmodule]: " + arg
-    return
-olog = (o) -> log "\n" + ostr(o)
-ostr = (o) -> JSON.stringify(o, null, 4)
-printSuccess = (arg) -> console.log(chalk.green(arg))
-printError = (arg) -> console.log(chalk.red(arg))
-print = (arg) -> console.log(arg)
-#endregion
-
-##############################################################################
-#region modulesFrom Environment
-import chalk from 'chalk'
-
-##############################################################################
-#region localModules
-mainProcess = null
-cfg = null 
-cliArguments = null
-#endregion
+#region debug
+import {createLogFunctions} from "thingy-debug"
+{log, olog} = createLogFunctions("startupmodule")
 
 #endregion
 
 ##############################################################################
-export initialize = () ->
-    log "startupmodule.initialize"
-    mainProcess = allModules.mainprocessmodule
-    cfg = allModules.configmodule
-    cliArguments = allModules.cliargumentsmodule
-    return
+#region imports
+import c from 'chalk'
+
+##############################################################################
+import * as mp from "./mainprocessmodule.js"
+import * as ca from "./cliargumentsmodule.js"
+
+#endregion
+
+##############################################################################
+#region internal variables
+errLog = (arg) -> console.log(c.red(arg))
+successLog = (arg) -> console.log(c.green(arg))
+
+#endregion
 
 ##############################################################################
 export cliStartup = ->
     log "cliStartup"
     try
-        e = cliArguments.extractArguments()
-        await mainProcess.execute(e)
+        e = ca.extractArguments()
+        await mp.execute(e)
         printSuccess('All done!');
     catch err
         printError("Error!")
